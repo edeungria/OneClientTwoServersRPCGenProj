@@ -1,0 +1,17 @@
+[air] lat long	city
+[ANB] 33.58 -85.85	Anniston,AL
+[AUO] 32.67 -85.44 	Auburn,AL
+[BHM] 33.57 -86.75 	Birmingham,AL
+[CKL] 32.90 -87.25 	Centreville,AL
+[DHN] 31.32 -85.45 	Dothan,AL
+[OZR] 31.28 -85.72 	Fort Rucker,AL
+[GAD] 33.97 -86.09 	Gadsden,AL
+[HSV] 34.65 -86.77 	Huntsville,AL
+[MXF] 32.38 -86.37 	Maxwell AFB,AL
+[MOB] 30.68 -88.25 	Mobile,AL
+[BFM] 30.63 -88.07 	Mobile Aeros,AL
+[MGM] 32.30 -86.40 	Montgomery,AL
+[MSL] 34.75 -87.62 	Muscle Shoal,AL
+[SEM] 32.34 -86.99 	Selma,AL
+[TOI] 31.87 -86.02 	Troy,AL
+[TCL] 33.23 -87.62 	Tuscaloosa,AL

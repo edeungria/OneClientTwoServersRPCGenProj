@@ -1,0 +1,165 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+const static char* file_mode = "r";
+const static char* place_file = "places2k.txt";
+const static char* airport_file = "airport-locations.txt"; 
+
+struct Place
+{
+  char state[3]; // state[2] = '\0'
+  char name[63];
+  float latitude;
+  float longitude;
+};
+
+struct Airport
+{
+  char code[4]; // state[3] = '\0'
+  char name[40];
+  char state[3]; // state[2] = '\0'
+  float latitude;
+  float longitude;
+};
+
+typedef struct Place Place;
+typedef struct Airport Airport;
+
+void printPlace(const Place* place)
+{
+  printf("\nState: %s\n", place->state);
+  printf("Name:  %s\n", place->name);
+  printf("Lat:   %f\n", place->latitude);
+  printf("Long:  %f\n\n", place->longitude);
+}
+
+void parsePlaceLine(const char line[200], Place* place)
+{
+  memcpy(place->state, &line[0], sizeof(char) * 2);
+  place->state[2] = '\0';
+  memcpy(place->name, &line[9], sizeof(char) * 63);
+  char lat[11], lon[12];
+  memcpy(lat, &line[143], sizeof(char) * 11);
+  memcpy(lon, &line[153], sizeof(char) * 12);
+  lat[10] = '\0';
+  lon[11] = '\0';
+  place->latitude = (float)atof(lat);
+  place->longitude = (float)atof(lon);
+  printPlace(place);
+}
+
+void readPlaces()
+{
+  FILE* places;
+  int place_size = 100;
+  Place* place_array = malloc(place_size * sizeof(Place));
+  int place_count = 0;
+  
+  places = fopen(place_file, file_mode);
+  if(places == NULL)
+  {
+	printf("Opening places failed\n");
+	return;
+  }
+  printf("Opening places successful\n");
+  printf("Reading file now...\n");
+  char line[200];
+  while(place_count < place_size && fgets(line, 200, places))
+  {
+
+	printf("----------------------------------\n");
+	// PARSE THE LINE INTO THE PLACE STRUCT
+	parsePlaceLine(line, &place_array[place_count]);
+	// END PARSE
+
+	printf("----------------------------------\n");
+	place_count++;
+
+	memset(line, 0, sizeof(line));
+  }
+  free(place_array);
+  printf("Done with places\n");
+}
+
+void printAirport(const Airport* airport)
+{
+  printf("Code:   %s\n", airport->code);
+  printf("Name:   %s\n", airport->name);
+  printf("State:  %s\n", airport->state);
+  printf("Lat:    %f\n", airport->latitude);
+  printf("Long:   %f\n", airport->longitude);
+}
+
+void parseAirportLine(char line[100], Airport* airport)
+{
+
+  char* token = strtok(line, " \t");
+  memcpy(airport->code, &token[1], sizeof(char) * 3);
+  airport->code[3] = '\0';
+
+  token = strtok(NULL, " \t");
+  airport->latitude = (float)atof(token);
+
+  token = strtok(NULL, " \t");
+  airport->longitude = (float)atof(token);
+
+  // get name and state
+  token = strtok(NULL, "\t");
+
+  // Split name and state
+  char* t2 = strtok(token, ",");
+  memcpy(airport->name, t2, sizeof(char) * 40);
+
+  t2 = strtok(NULL, ",");
+  memcpy(airport->state, t2, sizeof(char) * 2);
+  airport->state[3] = '\0';
+
+  printAirport(airport);
+}
+
+void readAirports()
+{
+  FILE* airports;
+  int airport_size = 100;
+  Airport* airport_array = malloc(airport_size * sizeof(Airport));
+  Airport* new_array;
+  int airport_count = 0;
+
+  airports = fopen(airport_file, file_mode);
+  if(airports == NULL)
+  {
+	printf("Opening airports failed.\n");
+	return;
+  }
+  printf("Opening airports successful.\n");
+  printf("Reading file now...\n");
+  char line[100];
+  fgets(line, 100, airports); // skip the first line of the file
+  memset(line, 0, sizeof(line));
+  while(airport_count < airport_size && fgets(line, 100, airports))
+  {
+	  
+	printf("LINE LENGTH: %d\n", strlen(line));
+	printf("---------------------------------\n");
+	parseAirportLine(line, &airport_array[airport_count]);
+	printf("---------------------------------\n");
+	
+	airport_count++;
+	memset(line, 0, sizeof(line));
+  }
+  free(airport_array);
+  printf("Done with airports\n");
+}
+
+int main()
+{
+  printf("Testing readPlaces...\n");
+  readPlaces();
+
+  printf("Testing readAirports...\n");
+  readAirports();
+
+  return 0;
+}
