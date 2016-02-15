@@ -3,7 +3,7 @@
  * It was generated using rpcgen.
  */
 
-#include "places.h"
+#include "place_airport.h"
 
 bool_t
 xdr_placetype (XDR *xdrs, placetype objp)

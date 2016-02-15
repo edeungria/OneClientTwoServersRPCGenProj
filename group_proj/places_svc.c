@@ -3,7 +3,7 @@
  * It was generated using rpcgen.
  */
 
-#include "places.h"
+#include "place_airport.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <rpc/pmap_clnt.h>
