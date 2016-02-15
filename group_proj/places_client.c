@@ -16,11 +16,12 @@ void printPlace(const Place* place)
 
 void printAirport(const Airport* airport)
 {
-  printf("Code:   %s\n", airport->code);
-  printf("Name:   %s\n", airport->name);
-  printf("State:  %s\n", airport->state);
-  printf("Lat:    %f\n", airport->latitude);
-  printf("Long:   %f\n", airport->longitude);
+  printf("Code:      %s\n", airport->code);
+  printf("Name:      %s\n", airport->name);
+  printf("State:     %s\n", airport->state);
+  printf("Lat:       %f\n", airport->latitude);
+  printf("Long:      %f\n", airport->longitude);
+  printf("Distance:  %f\n", airport->distance);
 }
 
 void
@@ -37,8 +38,9 @@ placeprog_1(char *host, char* city, char* state)
 		exit (1);
 	}
 #endif	/* DEBUG */
-	readplace_1_arg.name = city;
-	readplace_1_arg.state = state;
+	memcpy(readplace_1_arg.name, &city[0], sizeof(char) * PNAMELEN);
+	memcpy(readplace_1_arg.state, &state[0], sizeof(char) * STATELEN);
+	readplace_1_arg.state[2] = '\0';
 	readplace_1_arg.latitude = 0.0;
 	readplace_1_arg.longitude = 0.0;
 	result_1 = readplace_1(&readplace_1_arg, clnt);
@@ -47,10 +49,17 @@ placeprog_1(char *host, char* city, char* state)
 	}
 
 	airportlist air = result_1->readplaces_ret_u.list;
-	while(air != NULL)
+	if(!air)
 	{
-	  printAirport(air);
-	  air = air->next;
+		printf("City not found\n");
+	}
+	else
+	{
+		while(air != NULL)
+		{
+			printAirport(air);
+			air = air->next;
+		}
 	}
 	
 #ifndef	DEBUG

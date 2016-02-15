@@ -6,10 +6,25 @@
 
 #include "places.h"
 
-static Place place_array[NUMPLACES];
-static int has_file = 0;
-void parsePlaceLine(const char line[200], Place* place);
-void readPlaces();
+extern Place place_array[NUMPLACES];
+
+// case sensitive
+Place* searchPlaces(placetype city, statetype state)
+{
+	int i=0;
+	while(i<NUMPLACES)
+	{
+		if(strncmp(city, place_array[i].name, strlen(city)) == 0)
+		{
+			if(strncmp(state, place_array[i].state, strlen(state)) == 0)
+			{
+				return &place_array[i];
+			}
+		}
+		i++;
+	}
+	return NULL;
+}
 
 readplaces_ret *
 readplace_1_svc(Place *argp, struct svc_req *rqstp)
@@ -17,71 +32,28 @@ readplace_1_svc(Place *argp, struct svc_req *rqstp)
     airportlist air;
     airportlist* air_list;
 	static readplaces_ret  result;
-
-	/*
-	 * insert server code here
-	 */
-
-	// Read places if not already read
-	/*
-	  if(has_file == 0)
-	  readPlaces()
-	 */
-
-
+	Place* place_to_search;
 	/*
 	  Call airport server methods instead of this dummy code
 	 */
+	place_to_search = searchPlaces(argp->name, argp->state);
+	
+	if(place_to_search)
+	{
+		// dummy code
+		air_list = &result.readplaces_ret_u.list;
 
-	// dummy code
-	air_list = &result.readplaces_ret_u.list;
-
-	*air_list = (Airport*) malloc(sizeof(Airport));
-	air = *air_list;
-	air->code = "ABC";
-	air->name = "Bloop";
-	air->state = "WA";
-	air->latitude = 0.123;
-	air->longitude = 0.123;
-	air->next = NULL;
+		*air_list = (Airport*) malloc(sizeof(Airport));
+		air = *air_list;
+		strcpy(air->code, "ABC");
+		strcpy(air->name,"Bloop");
+		strcpy(air->state,"WA");
+		air->latitude = 0.123;
+		air->longitude = 0.123;
+		air->distance = 0.0;
+		air->next = NULL;
+	}
+	
 	result.err = 0;
 	return &result;
-}
-
-void parsePlaceLine(const char line[200], Place* place)
-{
-  memcpy(place->state, &line[0], sizeof(char) * 2);
-  place->state[2] = '\0';
-  memcpy(place->name, &line[9], sizeof(char) * 63);
-  char lat[11], lon[12];
-  memcpy(lat, &line[143], sizeof(char) * 11);
-  memcpy(lon, &line[153], sizeof(char) * 12);
-  lat[10] = '\0';
-  lon[11] = '\0';
-  place->latitude = (float)atof(lat);
-  place->longitude = (float)atof(lon);
-}
-
-void readPlaces()
-{
-  FILE* places;
-  int place_count = 0;
-  
-  places = fopen("places2k.txt", "r");
-  if(places == NULL)
-  {
-	printf("Opening places failed\n");
-	return;
-  }
-  printf("Opening places successful\n");
-  printf("Reading file now...\n");
-  char line[200];
-  while(place_count < NUMPLACES && fgets(line, 200, places))
-  {
-	parsePlaceLine(line, &place_array[place_count]);
-	place_count++;
-
-	memset(line, 0, sizeof(line));
-  }
-  printf("Done with places\n");
 }

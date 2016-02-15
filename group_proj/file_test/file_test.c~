@@ -141,12 +141,14 @@ void readAirports()
   while(airport_count < airport_size && fgets(line, 100, airports))
   {
 	  
-	printf("LINE LENGTH: %d\n", strlen(line));
-	printf("---------------------------------\n");
-	parseAirportLine(line, &airport_array[airport_count]);
-	printf("---------------------------------\n");
-	
-	airport_count++;
+	if(strlen(line) > 1)
+	{
+	  printf("---------------------------------\n");
+	  parseAirportLine(line, &airport_array[airport_count]);
+	  printf("---------------------------------\n");
+	  
+	  airport_count++;
+	}
 	memset(line, 0, sizeof(line));
   }
   free(airport_array);

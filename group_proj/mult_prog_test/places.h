@@ -18,14 +18,15 @@ extern "C" {
 #define STATELEN 3
 #define CODELEN 4
 #define NUMPLACES 25375
+#define NUMAIRPORTS 1121
 
-typedef char placetype[PNAMELEN];
+typedef char *placetype;
 
-typedef char airporttype[ANAMELEN];
+typedef char *airporttype;
 
-typedef char statetype[STATELEN];
+typedef char *statetype;
 
-typedef char codetype[CODELEN];
+typedef char *codetype;
 
 typedef struct Airport *airportlist;
 
@@ -74,13 +75,29 @@ extern  readplaces_ret * readplace_1_svc();
 extern int placeprog_1_freeresult ();
 #endif /* K&R C */
 
+#define AIRPORTPROG 0x3777777A
+#define AIRPORTS_VERS 1
+
+#if defined(__STDC__) || defined(__cplusplus)
+#define READAIRPORT 1
+extern  readplaces_ret * readairport_1(Place *, CLIENT *);
+extern  readplaces_ret * readairport_1_svc(Place *, struct svc_req *);
+extern int airportprog_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+
+#else /* K&R C */
+#define READAIRPORT 1
+extern  readplaces_ret * readairport_1();
+extern  readplaces_ret * readairport_1_svc();
+extern int airportprog_1_freeresult ();
+#endif /* K&R C */
+
 /* the xdr functions */
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  bool_t xdr_placetype (XDR *, placetype);
-extern  bool_t xdr_airporttype (XDR *, airporttype);
-extern  bool_t xdr_statetype (XDR *, statetype);
-extern  bool_t xdr_codetype (XDR *, codetype);
+extern  bool_t xdr_placetype (XDR *, placetype*);
+extern  bool_t xdr_airporttype (XDR *, airporttype*);
+extern  bool_t xdr_statetype (XDR *, statetype*);
+extern  bool_t xdr_codetype (XDR *, codetype*);
 extern  bool_t xdr_airportlist (XDR *, airportlist*);
 extern  bool_t xdr_Airport (XDR *, Airport*);
 extern  bool_t xdr_Airport (XDR *, Airport*);

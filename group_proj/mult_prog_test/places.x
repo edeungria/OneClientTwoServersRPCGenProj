@@ -3,11 +3,12 @@ const ANAMELEN = 40;
 const STATELEN = 3;
 const CODELEN = 4;
 const NUMPLACES = 25375;
+const NUMAIRPORTS = 1121;
 
-typedef char placetype[PNAMELEN];
-typedef char airporttype[ANAMELEN];
-typedef char statetype[STATELEN];
-typedef char codetype[CODELEN];
+typedef string placetype<PNAMELEN>;
+typedef string airporttype<ANAMELEN>;
+typedef string statetype<STATELEN>;
+typedef string codetype<CODELEN>;
 typedef struct Airport* airportlist;
 
 struct Airport
@@ -46,3 +47,9 @@ program PLACEPROG {
 		readplaces_ret READPLACE(Place) = 1;
 	} = 1;
 } = 0x37777779;
+
+program AIRPORTPROG {
+	version AIRPORTS_VERS {
+		readplaces_ret READAIRPORT(Place) = 1;
+	} = 1;
+} = 0x3777777A;

@@ -160,8 +160,8 @@ int main()
   printf("Testing readPlaces...\n");
   readPlaces();
 
-  printf("Testing readAirports...\n");
-  readAirports();
+  //  printf("Testing readAirports...\n");
+  //readAirports();
 
   return 0;
 }

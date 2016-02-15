@@ -16,45 +16,6 @@
 #define SIG_PF void(*)(int)
 #endif
 
-Place place_array[NUMPLACES];
-
-void parsePlaceLine(const char line[200], Place* place)
-{
-  memcpy(place->state, &line[0], sizeof(char) * 2);
-  place->state[2] = '\0';
-  memcpy(place->name, &line[9], sizeof(char) * 63);
-  place->name[62] = '\0';
-  char lat[11], lon[12];
-  memcpy(lat, &line[143], sizeof(char) * 11);
-  memcpy(lon, &line[153], sizeof(char) * 12);
-  lat[10] = '\0';
-  lon[11] = '\0';
-  place->latitude = (float)atof(lat);
-  place->longitude = (float)atof(lon);
-}
-
-void readPlaces()
-{
-  FILE* places;
-  int place_count = 0;
-  Place* temp;
-  places = fopen("places2k.txt", "r");
-  if(places == NULL)
-  {
-	printf("Opening places failed\n");
-	return;
-  }
-  char line[200];
-  while(place_count < NUMPLACES && fgets(line, 200, places))
-  {
-	temp = &place_array[place_count];
-	parsePlaceLine(line, temp);
-	place_count++;
-
-	memset(line, 0, sizeof(line));
-  }
-}
-
 static void
 placeprog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
@@ -96,13 +57,54 @@ placeprog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 	return;
 }
 
+static void
+airportprog_1(struct svc_req *rqstp, register SVCXPRT *transp)
+{
+	union {
+		Place readairport_1_arg;
+	} argument;
+	char *result;
+	xdrproc_t _xdr_argument, _xdr_result;
+	char *(*local)(char *, struct svc_req *);
+
+	switch (rqstp->rq_proc) {
+	case NULLPROC:
+		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
+		return;
+
+	case READAIRPORT:
+		_xdr_argument = (xdrproc_t) xdr_Place;
+		_xdr_result = (xdrproc_t) xdr_readplaces_ret;
+		local = (char *(*)(char *, struct svc_req *)) readairport_1_svc;
+		break;
+
+	default:
+		svcerr_noproc (transp);
+		return;
+	}
+	memset ((char *)&argument, 0, sizeof (argument));
+	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		svcerr_decode (transp);
+		return;
+	}
+	result = (*local)((char *)&argument, rqstp);
+	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
+		svcerr_systemerr (transp);
+	}
+	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		fprintf (stderr, "%s", "unable to free arguments");
+		exit (1);
+	}
+	return;
+}
+
 int
 main (int argc, char **argv)
 {
-	readPlaces();
 	register SVCXPRT *transp;
 
 	pmap_unset (PLACEPROG, PLACES_VERS);
+	pmap_unset (AIRPORTPROG, AIRPORTS_VERS);
 
 	transp = svcudp_create(RPC_ANYSOCK);
 	if (transp == NULL) {
@@ -113,6 +115,10 @@ main (int argc, char **argv)
 		fprintf (stderr, "%s", "unable to register (PLACEPROG, PLACES_VERS, udp).");
 		exit(1);
 	}
+	if (!svc_register(transp, AIRPORTPROG, AIRPORTS_VERS, airportprog_1, IPPROTO_UDP)) {
+		fprintf (stderr, "%s", "unable to register (AIRPORTPROG, AIRPORTS_VERS, udp).");
+		exit(1);
+	}
 
 	transp = svctcp_create(RPC_ANYSOCK, 0, 0);
 	if (transp == NULL) {
@@ -121,6 +127,10 @@ main (int argc, char **argv)
 	}
 	if (!svc_register(transp, PLACEPROG, PLACES_VERS, placeprog_1, IPPROTO_TCP)) {
 		fprintf (stderr, "%s", "unable to register (PLACEPROG, PLACES_VERS, tcp).");
+		exit(1);
+	}
+	if (!svc_register(transp, AIRPORTPROG, AIRPORTS_VERS, airportprog_1, IPPROTO_TCP)) {
+		fprintf (stderr, "%s", "unable to register (AIRPORTPROG, AIRPORTS_VERS, tcp).");
 		exit(1);
 	}
 
