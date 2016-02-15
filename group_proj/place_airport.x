@@ -3,12 +3,12 @@ const ANAMELEN = 40;
 const STATELEN = 3;
 const CODELEN = 4;
 const NUMPLACES = 25375;
-const NUMAIRPORTS = 1121;
+const NUMAIRPORTS = 1065;
 
-typedef string placetype<PNAMELEN>;
-typedef string airporttype<ANAMELEN>;
-typedef string statetype<STATELEN>;
-typedef string codetype<CODELEN>;
+typedef char placetype[PNAMELEN];
+typedef char airporttype[ANAMELEN];
+typedef char statetype[STATELEN];
+typedef char codetype[CODELEN];
 typedef struct Airport* airportlist;
 
 struct Airport

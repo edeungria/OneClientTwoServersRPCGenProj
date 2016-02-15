@@ -4,7 +4,7 @@
  * as a guideline for developing your own functions.
  */
 
-#include "places.h"
+#include "place_airport.h"
 
 readplaces_ret *
 readplace_1_svc(Place *argp, struct svc_req *rqstp)

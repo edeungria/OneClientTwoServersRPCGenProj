@@ -3,44 +3,48 @@
  * It was generated using rpcgen.
  */
 
-#include "places.h"
+#include "place_airport.h"
 
 bool_t
-xdr_placetype (XDR *xdrs, placetype *objp)
+xdr_placetype (XDR *xdrs, placetype objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_string (xdrs, objp, PNAMELEN))
+	 if (!xdr_vector (xdrs, (char *)objp, PNAMELEN,
+		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
 	return TRUE;
 }
 
 bool_t
-xdr_airporttype (XDR *xdrs, airporttype *objp)
+xdr_airporttype (XDR *xdrs, airporttype objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_string (xdrs, objp, ANAMELEN))
+	 if (!xdr_vector (xdrs, (char *)objp, ANAMELEN,
+		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
 	return TRUE;
 }
 
 bool_t
-xdr_statetype (XDR *xdrs, statetype *objp)
+xdr_statetype (XDR *xdrs, statetype objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_string (xdrs, objp, STATELEN))
+	 if (!xdr_vector (xdrs, (char *)objp, STATELEN,
+		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
 	return TRUE;
 }
 
 bool_t
-xdr_codetype (XDR *xdrs, codetype *objp)
+xdr_codetype (XDR *xdrs, codetype objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_string (xdrs, objp, CODELEN))
+	 if (!xdr_vector (xdrs, (char *)objp, CODELEN,
+		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
 	return TRUE;
 }
@@ -60,11 +64,11 @@ xdr_Airport (XDR *xdrs, Airport *objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_codetype (xdrs, &objp->code))
+	 if (!xdr_codetype (xdrs, objp->code))
 		 return FALSE;
-	 if (!xdr_airporttype (xdrs, &objp->name))
+	 if (!xdr_airporttype (xdrs, objp->name))
 		 return FALSE;
-	 if (!xdr_statetype (xdrs, &objp->state))
+	 if (!xdr_statetype (xdrs, objp->state))
 		 return FALSE;
 	 if (!xdr_float (xdrs, &objp->latitude))
 		 return FALSE;
@@ -102,9 +106,9 @@ xdr_Place (XDR *xdrs, Place *objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_placetype (xdrs, &objp->name))
+	 if (!xdr_placetype (xdrs, objp->name))
 		 return FALSE;
-	 if (!xdr_statetype (xdrs, &objp->state))
+	 if (!xdr_statetype (xdrs, objp->state))
 		 return FALSE;
 	 if (!xdr_float (xdrs, &objp->latitude))
 		 return FALSE;

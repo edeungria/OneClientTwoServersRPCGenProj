@@ -4,7 +4,7 @@
  * as a guideline for developing your own functions.
  */
 
-#include "places.h"
+#include "place_airport.h"
 
 void printPlace(const Place* place)
 {
