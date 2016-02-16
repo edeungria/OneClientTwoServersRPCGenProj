@@ -5,8 +5,27 @@
  */
 
 #include "place_airport.h"
+#include <memory.h>
 
 extern Place place_array[NUMPLACES];
+
+/* Default timeout can be changed using clnt_control() */
+static struct timeval TIMEOUT = { 25, 0 };
+
+readplaces_ret *
+readairport_1(Place *argp, CLIENT *clnt)
+{
+	static readplaces_ret clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, READAIRPORT,
+		(xdrproc_t) xdr_Place, (caddr_t) argp,
+		(xdrproc_t) xdr_readplaces_ret, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
 
 // case sensitive
 Place* searchPlaces(placetype city, statetype state)
@@ -29,20 +48,38 @@ Place* searchPlaces(placetype city, statetype state)
 readplaces_ret *
 readplace_1_svc(Place *argp, struct svc_req *rqstp)
 {
-    airportlist air;
-    airportlist* air_list;
+    airportlist* ret_air;
+    airportlist* air_list; // result from aiport server
 	static readplaces_ret  result;
 	Place* place_to_search;
 	/*
 	  Call airport server methods instead of this dummy code
 	 */
 	place_to_search = searchPlaces(argp->name, argp->state);
-	
 	if(place_to_search)
 	{
-		// dummy code
-		air_list = &result.readplaces_ret_u.list;
+		char* host = argp->host;
+		CLIENT *clnt;
+		readplaces_ret *result_1;
+		
+		#ifndef	DEBUG
+		clnt = clnt_create (host, AIRPORTPROG, AIRPORTS_VERS, "udp");
+		if (clnt == NULL) {
+			printf("SERVER to SERVER FAILED");
+			clnt_pcreateerror (host);
+			exit (1);
+		}
+		#endif	/* DEBUG */
 
+		result_1 = readairport_1(place_to_search, clnt);
+		if (result_1 == (readplaces_ret *) NULL) {
+			printf("Call to airport failed");
+			clnt_perror (clnt, "call failed");
+		}
+		result = *result_1;
+		result.err = 0;
+		return &result;
+		/*
 		*air_list = (Airport*) malloc(sizeof(Airport));
 		air = *air_list;
 		strcpy(air->code, "ABC");
@@ -52,8 +89,9 @@ readplace_1_svc(Place *argp, struct svc_req *rqstp)
 		air->longitude = 0.123;
 		air->distance = 0.0;
 		air->next = NULL;
+		*/
 	}
 	
-	result.err = 0;
-	return &result;
+	result.err = 1;
+	return NULL;
 }

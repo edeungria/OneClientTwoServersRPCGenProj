@@ -32,8 +32,9 @@ placeprog_1(char *host, char* city, char* state)
 	Place  readplace_1_arg;
 
 #ifndef	DEBUG
-	clnt = clnt_create (host, PLACEPROG, PLACES_VERS, "tcp");
+	clnt = clnt_create (host, PLACEPROG, PLACES_VERS, "udp");
 	if (clnt == NULL) {
+		printf("PLACE CLIENT FAIL");
 		clnt_pcreateerror (host);
 		exit (1);
 	}
@@ -43,6 +44,7 @@ placeprog_1(char *host, char* city, char* state)
 	readplace_1_arg.state[2] = '\0';
 	readplace_1_arg.latitude = 0.0;
 	readplace_1_arg.longitude = 0.0;
+	readplace_1_arg.host = host;
 	result_1 = readplace_1(&readplace_1_arg, clnt);
 	if (result_1 == (readplaces_ret *) NULL) {
 		clnt_perror (clnt, "call failed");
@@ -60,6 +62,7 @@ placeprog_1(char *host, char* city, char* state)
 			printAirport(air);
 			air = air->next;
 		}
+		xdr_free((xdrproc_t) xdr_readplaces_ret, (char*) result_1);
 	}
 	
 #ifndef	DEBUG
@@ -81,6 +84,7 @@ main (int argc, char *argv[])
 	host = argv[1];
 	city = argv[2];
 	state = argv[3];
+	
 	placeprog_1 (host, city, state);
 exit (0);
 }

@@ -17,11 +17,11 @@ SOURCES.x = place_airport.x
 
 TARGETS_SVC.c = places_svc.c places_server.c place_airport_xdr.c 
 TARGETS_CLNT.c = places_clnt.c places_client.c place_airport_xdr.c
-#TARGETS_SVCA.c = airports_svc.c airports_server.c place_airports_xdr.c
+TARGETS_SVCA.c = airports_svc.c airports_server.c place_airports_xdr.c
 
 OBJECTS_CLNT = $(SOURCES_CLNT.c:%.c=%.o) $(TARGETS_CLNT.c:%.c=%.o)
 OBJECTS_SVC = $(SOURCES_SVC.c:%.c=%.o) $(TARGETS_SVC.c:%.c=%.o)
-#OBJECTS_SVCA = $(SOURCES_SVCA.c:%.c=%.o) $(TARGETS_SVCA.c:%.c=%.o)
+OBJECTS_SVCA = $(SOURCES_SVCA.c:%.c=%.o) $(TARGETS_SVCA.c:%.c=%.o)
 # Compiler flags 
 
 CFLAGS += -g 
@@ -44,9 +44,9 @@ $(CLIENT) : $(OBJECTS_CLNT)
 $(SERVER) : $(OBJECTS_SVC) 
 	$(LINK.c) -o $(SERVER) $(OBJECTS_SVC) $(LDLIBS)
 	
-#$(SERVERA) : $(OBJECTS_SVCA) 
-#	$(LINK.c) -o $(SERVERA) $(OBJECTS_SVCA) $(LDLIBS)
+$(SERVERA) : $(OBJECTS_SVCA) 
+	$(LINK.c) -o $(SERVERA) $(OBJECTS_SVCA) $(LDLIBS) -lm
 
  clean:
-	 $(RM) core $(OBJECTS_CLNT) $(OBJECTS_SVC) $(CLIENT) $(SERVER) #$(OBJECTS_SVCA) $(SERVERA)
+	 $(RM) core $(OBJECTS_CLNT) $(OBJECTS_SVC) $(CLIENT) $(SERVER) $(OBJECTS_SVCA) $(SERVERA)
 

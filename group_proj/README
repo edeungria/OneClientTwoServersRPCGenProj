@@ -1,0 +1,23 @@
+Elison Deungria
+       File Parsing
+       Place Server
+John Hager
+     Nearest Neighbor Search
+     Airport Server
+
+Individually, the place server and the airport server work.
+
+However, when we combined them, we could not get the connection between
+client -> place_server -> and airport_server to work.
+
+All files reference the place_airport.h, as that has everything in
+aiports.h and places.h
+
+place_airport.x is also both airports.x and places.x
+
+The makefile uses files from all three .x files used, but place_airport.h
+is the main header file used.
+
+Airport server is ./airports_server
+Places server is  ./places_server
+Client is     	  ./places_client

@@ -55,6 +55,7 @@ struct Place {
 	statetype state;
 	float latitude;
 	float longitude;
+	char* host;
 };
 typedef struct Place Place;
 
@@ -79,13 +80,13 @@ extern int placeprog_1_freeresult ();
 #define AIRPORTS_VERS 1
 
 #if defined(__STDC__) || defined(__cplusplus)
-#define READAIRPORT 1
+#define READAIRPORT 2
 extern  readplaces_ret * readairport_1(Place *, CLIENT *);
 extern  readplaces_ret * readairport_1_svc(Place *, struct svc_req *);
 extern int airportprog_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
-#define READAIRPORT 1
+#define READAIRPORT 2
 extern  readplaces_ret * readairport_1();
 extern  readplaces_ret * readairport_1_svc();
 extern int airportprog_1_freeresult ();
